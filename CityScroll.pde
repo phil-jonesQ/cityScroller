@@ -5,16 +5,19 @@ ArrayList<Tower> towerblock = new ArrayList<Tower>();
 Ship ship;
 
 public final int scl = 60;
-public int score;
-public float damage;
+public final int damageThreshold=500;
+float damage;
 int rows;
 int cols;
+int start;
 boolean hit = false;
 PFont f;
+boolean debug = false;
 
 void setup() {
   frameRate(15);
-  size(1200, 400);
+  size(900, 450);
+  start = millis();
   cols = width/scl;
   rows = height/scl;
   f = createFont("Arial", 50, true);
@@ -24,9 +27,14 @@ void setup() {
 
 
 void mousePressed() {
-  removeTower();
-  shiftLeft();
-  addTower();
+  if (debug) {
+    removeTower();
+    shiftLeft();
+    addTower();
+  } else {
+    init();
+    loop();
+  }
 }
 
 void keyPressed() {
@@ -35,7 +43,7 @@ void keyPressed() {
       ship.up();
     }
     if (keyCode == DOWN) {
-     ship.down(); 
+      ship.down();
     }
   }
 }
@@ -43,18 +51,21 @@ void keyPressed() {
 void draw() {
   background(0);
   drawCity();
-  //removeTower();
-  //shiftLeft();
-  //addTower();
+  if (!debug) {
+    removeTower();
+    shiftLeft();
+    addTower();
+  }
   drawShip();
   ship.update();
-  displayScore();
   displayDamage();
-  if (damage > 1000) {
-   
-     score = 0;
-     damage = 0;
-    
+  displayTimer();
+  if (damage > damageThreshold) {
+    damage=damageThreshold;
+    crashed();
+    if (!debug) {
+      noLoop();
+    }
   }
 }
 
@@ -71,11 +82,9 @@ void drawCity()
     towerblock.get(i).show();
     if (towerblock.get(1).hits(ship)) {
       hit=true;
-      //print ("hitDetected");
-      damage=damage+0.1;
+      damage=damage+0.5;
     } else {
       hit=false;
-      //print ("NoHit!!");
     }
   }
 }
@@ -99,23 +108,40 @@ void addTower() {
 void drawShip() {
   if (hit) {
     ship.show(true);
-  }else{
+  } else {
     ship.show(false);
-}
+  }
 }
 
-void displayScore(){
+
+void displayDamage() {
   textFont(f, 12);                  
-  fill(255,0,0);
+  fill(255, 0, 0);
   textAlign(CENTER);
-  text("SCORE:" + score, width-200, 40);
+  text("DAMAGE:" + floor(damage), width-100, 40);
   stroke(255);
 }
 
-void displayDamage(){
-   textFont(f, 12);                  
-  fill(255,0,0);
+void displayTimer() {
+
+  int timer = millis()-start;
+  text("TIME:" + timer, width-200, 40);
+}
+
+
+void crashed() {
+  textFont(f, 12);                  
+  fill(255, 0, 0);
   textAlign(CENTER);
-  text("DAMAGE:" + floor(damage), width-100, 40);
-  stroke(255); 
+  text("GAME OVER!!", width/2, height/2);
+  stroke(255);
+}
+
+void init() {
+
+  damage=0;
+  start=0;
+  start = millis();
+  populateCity(width);
+  ship = new Ship();
 }

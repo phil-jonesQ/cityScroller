@@ -11,7 +11,7 @@ class Tower {
 
   Tower(float xOffset) {
     tower = loadImage("Tower.jpg");
-    yOffset = random (-250, 250);
+    yOffset = random (-250, 350);
     // Not probably the best way to make "buildings more interesting.."
     w=5;
     if (yOffset > 15) {
@@ -39,9 +39,9 @@ class Tower {
     int a = Math.round(w);
     int b = Math.round(h);
     if (h < 0) {
-       b =1;
+      b =1;
     }
-    tower.resize(a,b);
+    tower.resize(a, b);
     image(tower, xOff, y);
   }
 
@@ -50,23 +50,19 @@ class Tower {
   }
 
   boolean hits(Ship ship) {
+    float shipX = ship.x+10;
+    float shipY = ship.y+20;
+    float d = dist(xOff, y, shipX, shipY);
+    //println ("Tower X = " + xOff + "Tower Y = " + y + "Ship x = " + shipX + "Ship y = " + shipY);
+    //println ("Distance is " +d);
 
-    float d = dist(xOff-scl,y,ship.x-scl,ship.y);
-    //println ("Tower X = " + xOff + "Tower Y = " + y + "Ship x = " + ship.x + "Ship y = " + ship.y);
-    println ("Distance is " +d + "Tower Y = " + y + "Ship y = " + ship.y);
-    if ( d < 80 && ship.y > y ) {
-      score = score+1;
-    }
-    if (d < 60 && ship.y > y ) {
+    //Game mechanic.. If close to the tower we get points
+    //Not if we're getting damage
+    //Collision detection is hacky and hard wired but works for this game.
+
+    if (d < 30 || ship.y > y || ship.y < 1) {
       return true;
     }
-    return false; 
+    return false;
   }
 }
-
-  //if (ship.x > x && ship.x < x + w) {
-    //  if ((ship.y < yOffset+25) || (ship.y > (height-25))) {
-    //    return true;
-    //  }
-    //}
-    //return false;

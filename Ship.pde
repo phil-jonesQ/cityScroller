@@ -16,8 +16,8 @@ class Ship {
     x = 50;
     y = 40;
     velocity=0;
-    gravity = 0;
-    lift = -15;
+    gravity = 1.3;
+    lift = -20;
     velocity = 0;
   }
 
